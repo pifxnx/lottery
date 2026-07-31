@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from message import pick_winner
-from schemas import get_all_participants, get_participant_by_id
+from model import ParticipantCreate
+from schemas import get_all_participants, get_participant_by_id, add_participant
 
 app = FastAPI(title="lottery")
 
@@ -14,6 +15,11 @@ async def users():
 def start_l():
     pick_winner()
     return
+
+
+@app.get("/add")
+async def add(participant: ParticipantCreate):
+    return await add_participant(participant)
 
 
 @app.get("/participants")
