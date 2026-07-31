@@ -18,4 +18,4 @@ engine = create_async_engine(
     "postgresql+asyncpg://postgres:postgres@localhost:5432/participants"
 )
 
-async_session = async_sessionmaker(engine=engine, expire_on_commit=False)
+async_session = async_sessionmaker(engine, expire_on_commit=False)

@@ -17,7 +17,7 @@ def start_l():
     return
 
 
-@app.get("/add")
+@app.post("/add")
 async def add(participant: ParticipantCreate):
     return await add_participant(participant)
 
