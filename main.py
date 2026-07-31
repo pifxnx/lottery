@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from message import pick_winner
+from schemas import get_all_participants, get_participant_by_id
 
 app = FastAPI(title="lottery")
 
@@ -13,6 +14,18 @@ async def users():
 def start_l():
     pick_winner()
     return
+
+
+@app.get("/participants")
+async def get_ps():
+    res = await get_all_participants()
+    return res
+
+
+@app.get("/participants/{id}")
+async def get_ps_by_id(id: int):
+    res = await get_participant_by_id(id)
+    return res
 
 
 @app.post("winner")
