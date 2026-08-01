@@ -20,3 +20,11 @@ engine = create_async_engine(
 )
 
 async_session = async_sessionmaker(engine, expire_on_commit=False)
+
+
+async def get_db():
+    try:
+        s = async_session()
+        yield s
+    finally:
+        await s.close()
