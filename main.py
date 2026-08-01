@@ -1,7 +1,13 @@
 from fastapi import FastAPI
 from message import pick_winner
 from model import ParticipantCreate
-from schemas import get_all_participants, get_participant_by_id, add_participant
+from crud import (
+    get_all_participants,
+    get_participant_by_id,
+    add_participant,
+    get_winner,
+    set_winner,
+)
 
 app = FastAPI(title="lottery")
 
@@ -14,7 +20,7 @@ async def users():
 @app.get("/start_lottery")
 def start_l():
     pick_winner()
-    return
+    return {"message": "лотерея запущена"}
 
 
 @app.post("/add")
@@ -34,6 +40,13 @@ async def get_ps_by_id(id: int):
     return res
 
 
-@app.post("winner")
-def set_winner(winner: None | str):
-    return winner
+@app.post("/choose_winner")
+async def winner():
+    participant = await set_winner()
+    return participant
+
+
+@app.get("/get_winner")
+async def show_winner():
+    participant = await get_winner()
+    return participant
