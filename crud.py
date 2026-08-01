@@ -2,7 +2,7 @@ from db import async_session
 from model import ParticipantCreate
 from db import Participant
 from typing import List
-from sqlalchemy import select, func, update
+from sqlalchemy import select, func, update, text
 
 
 async def add_participant(participant: ParticipantCreate):
@@ -40,16 +40,25 @@ async def get_winner():
 
 
 async def set_winner():
-    async with async_session() as s:
-        stmt = select(Participant).order_by(func.random()).limit(1)
-        res = await s.execute(stmt)
-        participant = res.scalar_one()
-        stmt = (
-            update(Participant)
-            .where(Participant.id == participant.id)
-            .values(status=True)
-        )
-        await s.execute(stmt)
-        await s.commit()
+    if await get_winner() is None:
+        async with async_session() as s:
+            stmt = select(Participant).order_by(func.random()).limit(1)
+            res = await s.execute(stmt)
+            participant = res.scalar_one()
+            stmt = (
+                update(Participant)
+                .where(Participant.id == participant.id)
+                .values(status=True)
+            )
+            await s.execute(stmt)
+            await s.commit()
 
-        return participant
+            return participant
+    else:
+        return {"message": "победитель уже выбран"}
+
+
+async def clean_table():
+    async with async_session() as s:
+        await s.execute(text("TRUNCATE TABLE participants RESTART IDENTITY"))
+        await s.commit()

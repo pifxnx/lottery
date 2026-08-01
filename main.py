@@ -7,6 +7,7 @@ from crud import (
     add_participant,
     get_winner,
     set_winner,
+    clean_table,
 )
 
 app = FastAPI(title="lottery")
@@ -17,7 +18,7 @@ async def users():
     return {"message": "will be later"}
 
 
-@app.get("/start_lottery")
+@app.post("/start_lottery")
 def start_l():
     pick_winner()
     return {"message": "лотерея запущена"}
@@ -50,3 +51,9 @@ async def winner():
 async def show_winner():
     participant = await get_winner()
     return participant
+
+
+@app.post("/participants/clear")
+async def truncate():
+    await clean_table()
+    return {"message": "таблица очищена"}
